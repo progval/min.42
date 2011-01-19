@@ -47,6 +47,7 @@ if populateDb:
                     `tiny` varchar(10),
                     `u_id` int(10),
                     `full` varchar(65536),
+                    `expiry` int(10),
                     PRIMARY KEY(`tiny`)
                 );"""
-    cursor.execute(query).read())
+    cursor.execute(query)

@@ -26,61 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import copy
+import cgi
 
-head = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
-<head>
-<title>%(title)s</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" media="screen" type="text/css" href="/static/design.css" />
-</head>
-<body>
-<div id="header">
-<img src="/static/logo.png" alt="logo" />
-</div>
-<table id="menu">
-<tr>
-%(menu)s
-</tr>
-</table>
-<div id="body">
-"""
-menuTemplate = [('tinyfy', '/', 'URLs raccourcies'),
-        ('about', '/about/', u'À propos')]
-def getHead(**kwargs):
-    global menuTemplate
-    menu = copy.deepcopy(menuTemplate)
-    if kwargs.has_key('menu'):
-        menu += kwargs['menu']
-    params = kwargs
-    if not params.has_key('title'):
-        params.update({'title': 'min.42'})
-    else:
-        params['title'] += ' - min.42'
-    strMenu = ''
-    for image, link, name in menu:
-        strMenu += u"""
-<td>
-<a href="%s">
-<img src="/static/%s.png" alt="%s" title="%s" />
-<br />
-%s
-</a>
-</td>""" % (link, image, image, name, name)
-    params.update({'menu': strMenu})
-    return head % params
-
-
-foot = u"""
-</div>
-<p id="footer">
-Site conçu par <a href="mailto:progval@gmail.com">ProgVal</a> et
-disponible sous licence BSD.
-</p>
-</body>
-</html>
-"""
-def getFoot(**kwargs):
-    global foot
-    return foot
+def http_query(environ, method):
+    assert environ['REQUEST_METHOD'].upper() == method.upper()
+    postData = cgi.FieldStorage(
+            fp=environ['wsgi.input'],
+            environ=environ,
+            keep_blank_values=True)
+    data = {}
+    for key in postData.keys():
+        data.update({key: str(postData[key].value)})
+    return data
