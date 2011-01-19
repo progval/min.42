@@ -37,7 +37,8 @@ import random
 import time
 import re
 
-matchUrl = re.compile('^[a-z]+://([a-zA-Z_-]\.)+[a-z]{2,4}(:[0-9]+)(/.*)?$')
+matchUrl1 = re.compile('^([a-zA-Z_-]+\.)+[a-z0-9]{2,4}(:[0-9]+)?(/.*)?$')
+matchUrl2 = re.compile('^[a-z]+://([a-zA-Z_-]+\.)+[a-z0-9]{2,4}(:[0-9]+)?(/.*)?$')
 
 rootTemplate = u"""
 Bienvenue sur <a href="http://min.42/">min.42</a>
@@ -125,7 +126,9 @@ def run(environ):
 
         longurl, size = data['longurl'], data['size']
 
-        if not matchUrl.match(longurl):
+        if matchUrl1.match(longurl):
+            longurl = 'http://' + longurl
+        elif not matchUrl2.match(longurl):
             errormsg += u'<p>Votre URL longue ne correspond pas à notre ' + \
                         u'expression régulière.</p>'
         try:
