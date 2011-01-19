@@ -134,6 +134,11 @@ def run(environ):
         except:
             errormsg += u'<p>La taille ne peut être qu\'un entier ' + \
                         u'positif compris entre 2 et 7 (inclus)</pre>'
+        if errormsg != '':
+            responseBody = html.getHead(title='Nouvelle URL - Erreur')
+            responseBody += errormsg
+            responseBody += html.getFoot()
+            return status, headers, responseBody
 
         hash_ = hashlib.md5(longurl)
         tiny = ''
