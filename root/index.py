@@ -104,10 +104,17 @@ def run(environ):
 
             older = time.time() - 60*60
             list_ = [x.split('-')[1] for x in list_ if x.split('-')[0]>older]
+            list_ = ['<a href="/%s">%s</a>' % (x,x) for x in list_]
             lastTiny = '<li>' + \
                        '</li><li>'.join(list_) + \
                        '</li>'
         responseBody += rootTemplate % {'last_tiny': lastTiny}
+
+
+        cursor = db.conn.cursor()
+        cursor.execute('SELECT `full` FROM `tiny2full`')
+
+
         responseBody += html.getFoot()
         return status, headers, responseBody
     elif environ['module_path'] == 'submiturl.htm':
@@ -145,6 +152,7 @@ def run(environ):
                                           WHERE `tiny`=?""", (tiny,))
                     cursor.execute('INSERT INTO `tiny2full` VALUES(?,0,?,?)',
                                    (tiny, longurl, getExpiry(size)))
+                    db.conn.commit()
                     break
                 if result[0] == longurl:
                     tiny = digest[0:size]
@@ -171,6 +179,17 @@ def run(environ):
                                      path='/')
         headers.append(('Set-Cookie', str(cookie)))
     else:
-        raise exceptions.Error404()
+        cursor = db.conn.cursor()
+        cursor.execute('SELECT `full` FROM `tiny2full` WHERE `tiny`=?',
+                       (environ['module_path'],))
+        result = cursor.fetchone()
+        if result is None:
+            raise exceptions.Error404()
+
+        responseBody = (u'<a href="%s">Cliquez sur ce lien si vous n\'êtes '
+                       u'pas redirigé(e)</a>') % result[0]
+        headers.append(('Location', str(result[0])))
+        status = '302 Found'
+
 
     return status, headers, responseBody
