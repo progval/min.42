@@ -77,7 +77,8 @@ def dispatcher(environ):
     uri = environ['REDIRECT_URL']
     module = None
     status = None
-    pathToModule = [('/', 'root.index')]
+    pathToModule = [('/about/', 'root.about'),
+                    ('/', 'root.index')]
     for path, module in pathToModule:
         if uri.startswith(path):
             break
