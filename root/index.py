@@ -37,7 +37,7 @@ import random
 import time
 import re
 
-matchUrl = re.compile('^[a-z]+://([a-zA-Z_-]\.)+[a-z]{2,4}(/.*)?$')
+matchUrl = re.compile('^[a-z]+://([a-zA-Z_-]\.)+[a-z]{2,4}(:[0-9]+)(/.*)?$')
 
 rootTemplate = u"""
 Bienvenue sur <a href="http://min.42/">min.42</a>
