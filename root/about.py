@@ -39,7 +39,7 @@ classiques vous proposent une taille de 7 ou 8 caractères pour une durée
 infinie ; pour min.42, une durée de vie infinie correspond à 7 caractères).
 <br />
 Même si l'inscription est préférée, pour profiter un maximum de
-fonctionnalités, elle est <strong>totalement<strong> gratuite, et ne demande
+fonctionnalités, elle est <strong>totalement</strong> gratuite, et ne demande
 pas d'autre informatique que l'essentiel. Votre mot de passe est crypté de
 manière indéchiffrable dans notre base de données.
 Tout est mis en œuvre pour que votre choix de ne pas vous inscrire soit le
@@ -48,7 +48,9 @@ moins pénalisant possible.
 Enfin, Min.42 est sous licence libre. Vous pouvez lire le code sur
 <a href="http://github.com/ProgVal/Min.42/">GitHub</a>, vous en servir pour
 créer votre propre raccourcisseur d'URLs, le modifier, et le redistribuer,
-en respectant les termes de la licence BSD.</p>
+en respectant les termes de la licence BSD.<br />
+Les images utilisées proviennent de la Open Icon Library et son disponibles
+sous licence libre.</p>
 
 <h1>Contenus et liens</h1>
 <p>En utilisant ce service, vous acceptez implicitement de ne pas impliquer
