@@ -26,34 +26,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
+from common import html
+from common import errors
+from common.lib.pesto import cookie
 
-################################
-# Configuration
-FILE = 'database.sqlite'
-################################
-
-if not os.path.isfile(FILE):
-    populateDb = True
-else:
-    populateDb = False
-
-import sqlite3
-conn = sqlite3.connect(FILE, check_same_thread = False)
-
-cursor = conn.cursor()
-cursor.execute("""CREATE TABLE IF NOT EXISTS `tiny2full` (
-                      `tiny` varchar(10),
-                      `u_id` int(10),
-                      `full` varchar(65536),
-                      `submit_time` int(10),
-                      `expiry` int(10),
-                      PRIMARY KEY(`tiny`)
-                  );""")
-cursor.execute("""CREATE TABLE IF NOT EXISTS `users` (
-                      `u_id` int(10),
-                      `name` varchar(40),
-                      `passwdhash` varchar(100),
-                      `email` varchar(200),
-                      PRIMARY KEY(`u_id`)
-                  );""")
+def run(environ):
+    status = '200 OK'
+    headers = []
+    responseBody = html.getHead(title=u'Déconnexion')
+    path = environ['module_path']
+    if path == '':
+        responseBody += u'<p>Vous avez été déconnecté(e)</p>'
+        headers += [('Set-Cookie',
+                     str(cookie.expire_cookie('name', path='/')))]
+        headers += [('Set-Cookie',
+                     str(cookie.expire_cookie('passwdhash', path='/')))]
+        headers.append(('Location', '/'))
+        status = '302 Found'
+        responseBody += u'À bientôt !'
+    else:
+        raise errors.Error404()
+    responseBody += html.getFoot()
+    return status, headers, responseBody

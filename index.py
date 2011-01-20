@@ -37,6 +37,7 @@ os.chdir(directory)
 from common import exceptions
 from common import errors
 from common.lib.pesto import cookie as cookielib
+from common import user
 
 DEBUG = True
 
@@ -53,6 +54,7 @@ def application(environ, start_response):
     environ.update({'cookies': {}})
     for cookie in cookies:
         environ['cookies'].update({cookie.name: cookie})
+    user.getUserFromCookies(environ['cookies'])
     try:
         status, headers, responseBody = dispatcher(environ)
     except exceptions.Error404:
@@ -78,6 +80,9 @@ def dispatcher(environ):
     module = None
     status = None
     pathToModule = [('/about/', 'root.about'),
+                    ('/disconnect/', 'user.disconnect'),
+                    ('/connect/', 'user.connect'),
+                    ('/register/', 'user.register'),
                     ('/', 'root.index')]
     for path, module in pathToModule:
         if uri.startswith(path):

@@ -27,6 +27,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import copy
+from common import user
 
 head = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
@@ -41,6 +42,7 @@ head = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.
 </div>
 <table id="menu">
 <tr>
+<td>%(username)s</td>
 %(menu)s
 </tr>
 </table>
@@ -58,6 +60,11 @@ def getHead(**kwargs):
         params.update({'title': 'min.42'})
     else:
         params['title'] += ' - min.42'
+    if user.currentUser.name == 'anonyme':
+        menu += [('connect', '/connect/', 'Connexion')]
+        menu += [('register', '/register/', 'Inscription')]
+    else:
+        menu += [('disconnect', '/disconnect/', u'Déconnexion')]
     strMenu = ''
     for image, link, name in menu:
         strMenu += u"""
@@ -68,7 +75,9 @@ def getHead(**kwargs):
 %s
 </a>
 </td>""" % (link, image, image, name, name)
-    params.update({'menu': strMenu})
+    params.update({'menu': strMenu,
+                   'username': unicode(user.currentUser.name),
+                   'connection': ''})
     return head % params
 
 

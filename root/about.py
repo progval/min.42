@@ -30,13 +30,19 @@ from common import exceptions
 from common import errors
 from common import html
 
-body = u"""<h1>Min.42 est libre</h1>
+body = u"""<h1>Min.42 est libre et respectueux de vos droits</h1>
 <p>Ce raccourcisseur d'URL est axé sur la liberté. Il promeut le TLD .42,
 lui-même basé sur la liberté, et favorisant les logiciels libres. De plus,
 min.42 a pour but de vous laisser autant que possible la liberté de choisir
 le rapport durée de vie/taille que vous souhaitez (les raccourcisseurs
 classiques vous proposent une taille de 7 ou 8 caractères pour une durée
 infinie ; pour min.42, une durée de vie infinie correspond à 7 caractères).
+<br />
+Même si l'inscription est préférée, pour profiter un maximum de
+fonctionnalités, elle est <strong>totalement<strong> gratuite, et ne demande
+pas d'autre informatique que l'essentiel. Votre IP n'est pas enregistrée.
+Votre mot de passe est crypté de manière indéchiffrable dans notre base
+de données.
 <br />
 Enfin, Min.42 est sous licence libre. Vous pouvez lire le code sur
 <a href="http://github.com/ProgVal/Min.42/">GitHub</a>, vous en servir pour

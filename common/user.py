@@ -26,34 +26,51 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
+import re
+import hashlib
+from common import db
+from common.lib.pesto import cookie
 
-################################
-# Configuration
-FILE = 'database.sqlite'
-################################
+testName = re.compile('^[a-zA-Z0-9_-]{2,36}$')
+testPasswdhash = re.compile('^[a-f0-9]*$')
 
-if not os.path.isfile(FILE):
-    populateDb = True
-else:
-    populateDb = False
+def getUserFromCookies(cookies):
+    global currentUser
+    if not cookies.has_key('name') or not cookies.has_key('passwdhash'):
+        user = User()
+    else:
+        user = User(cookies['name'].value, cookies['passwdhash'].value)
+    currentUser = user
+    return user
 
-import sqlite3
-conn = sqlite3.connect(FILE, check_same_thread = False)
+users = {}
+def User(name='anonyme', passwdhash=''):
+    global users
+    #DEBUG
+    return _User(name, passwdhash)
+    if not users.has_key(name):
+        users.update({name: _User(name, passwdhash)})
+    return users[name]
+class _User:
+    def __init__(self, name, passwdhash):
+        global currentUser
+        self.__class__.__name__ = 'User'
+        cursor = db.conn.cursor()
+        assert testName.match(name)
+        assert testPasswdhash.match(passwdhash)
+        if passwdhash != '':
+            ##DB#users
+            cursor.execute("""SELECT u_id, name, passwdhash FROM users
+WHERE name=? AND passwdhash=?;""",
+                           (name, passwdhash))
+        else:
+            cursor.execute("""SELECT u_id, name, passwdhash FROM users
+WHERE name=?;""", (name,))
 
-cursor = conn.cursor()
-cursor.execute("""CREATE TABLE IF NOT EXISTS `tiny2full` (
-                      `tiny` varchar(10),
-                      `u_id` int(10),
-                      `full` varchar(65536),
-                      `submit_time` int(10),
-                      `expiry` int(10),
-                      PRIMARY KEY(`tiny`)
-                  );""")
-cursor.execute("""CREATE TABLE IF NOT EXISTS `users` (
-                      `u_id` int(10),
-                      `name` varchar(40),
-                      `passwdhash` varchar(100),
-                      `email` varchar(200),
-                      PRIMARY KEY(`u_id`)
-                  );""")
+        row = cursor.fetchone()
+        if row is None:
+            self.name = 'anonyme'
+            self.passwdhash = ''
+            self.id = 0
+        else:
+            self.id, self.name, self.passwdhash = row

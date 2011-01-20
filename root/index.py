@@ -31,6 +31,7 @@ from common import exceptions
 from common import parsers
 from common import errors
 from common import html
+from common import user
 from common import db
 import hashlib
 import random
@@ -98,18 +99,17 @@ def run(environ):
     if environ['module_path'] == '':
         responseBody = html.getHead(title='Accueil')
 
-        lastTiny = ''
-        if environ['cookies'].has_key('last_tiny'):
-            list_ = environ['cookies']['last_tiny'].value.split('|')
-            list_.remove('')
 
-            older = time.time() - 60*60
-            list_ = [x.split('-')[1] for x in list_ if x.split('-')[0]>older]
-            list_ = ['<a href="/%s">%s</a>' % (x,x) for x in list_]
-            lastTiny = '<li>' + \
-                       '</li><li>'.join(list_) + \
-                       '</li>'
-        responseBody += rootTemplate % {'last_tiny': lastTiny}
+        cursor = db.conn.cursor()
+        cursor.execute("""SELECT `tiny`, `full` FROM `tiny2full`
+                          WHERE `u_id`=?
+                          ORDER BY `submit_time` DESC
+                          LIMIT 0,20""", (user.currentUser.id,))
+        older = time.time() - 60*60
+        string = ''
+        for tiny, full in cursor:
+            string += '<li><a href="/%s">%s</a>' % (tiny, full)
+        responseBody += rootTemplate % {'last_tiny': string}
 
 
         cursor = db.conn.cursor()
@@ -158,8 +158,9 @@ def run(environ):
                     if result is not None:
                         cursor.execute("""DELETE FROM `tiny2full`
                                           WHERE `tiny`=?""", (tiny,))
-                    cursor.execute('INSERT INTO `tiny2full` VALUES(?,0,?,?)',
-                                   (tiny, longurl, getExpiry(size)))
+                    cursor.execute('INSERT INTO `tiny2full` VALUES(?,?,?,?,?)',
+                                   (tiny, user.currentUser.id, longurl,
+                                    getExpiry(size), time.time()))
                     db.conn.commit()
                     break
                 if result[0] == longurl:
@@ -176,16 +177,6 @@ def run(environ):
                        u'pas redirigé(e)</a>'
         headers.append(('Location', '/'))
         status = '302 Found'
-
-        lastTiny = ''
-        if environ['cookies'].has_key('last_tiny'):
-            lastTiny = environ['cookies']['last_tiny'].value
-        lastTiny += '|%i-%s' % (time.time(), tiny)
-        cookie = cookielib.Cookie(name='last_tiny',
-                                     value=lastTiny,
-                                     expires=60*60,
-                                     path='/')
-        headers.append(('Set-Cookie', str(cookie)))
     else:
         cursor = db.conn.cursor()
         cursor.execute('SELECT `full` FROM `tiny2full` WHERE `tiny`=?',
