@@ -49,7 +49,7 @@ Enfin, Min.42 est sous licence libre. Vous pouvez lire le code sur
 <a href="http://github.com/ProgVal/Min.42/">GitHub</a>, vous en servir pour
 créer votre propre raccourcisseur d'URLs, le modifier, et le redistribuer,
 en respectant les termes de la licence BSD.<br />
-Les images utilisées proviennent de la Open Icon Library et son disponibles
+Les images utilisées proviennent de la Open Icon Library et sont disponibles
 sous licence libre.</p>
 
 <h1>Contenus et liens</h1>
@@ -64,7 +64,7 @@ ce site et ce service dans une quelconque activité illégale, ce qui inclue
 Les liens longs (ceux vers lesquels les liens courts redirigent) sont
 sous l'entière responsabilité de l'utilisateur les soumettant, et ne sont en
 aucun cas sous la responsabilité de l'auteur du site. Les liens ne sont pas
-modéré, rien ne peut donc garantir leur sanité.
+modérés, rien ne peut donc garantir leur sanité.
 </p>
 
 <h1>Contact</h1>
