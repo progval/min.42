@@ -191,12 +191,11 @@ def run(environ):
                        (environ['module_path'], user.currentUser.id, int(time.time())))
         db.conn.commit()
         cursor.execute('SELECT * FROM `clicks`')
-        print repr([x for x in cursor])
 
         responseBody = (u'<a href="%s">Cliquez sur ce lien si vous n\'êtes '
                        u'pas redirigé(e)</a>') % result[0]
-        #headers.append(('Location', str(result[0])))
-        #status = '302 Found'
+        headers.append(('Location', str(result[0])))
+        status = '302 Found'
 
 
     return status, headers, responseBody
