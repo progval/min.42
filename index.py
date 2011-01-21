@@ -80,6 +80,7 @@ def dispatcher(environ):
     module = None
     status = None
     pathToModule = [('/about/', 'root.about'),
+                    ('/stats/', 'root.stats'),
                     ('/disconnect/', 'user.disconnect'),
                     ('/connect/', 'user.connect'),
                     ('/register/', 'user.register'),

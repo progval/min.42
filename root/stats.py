@@ -26,39 +26,53 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
+import time
+from common import db
+from common import html
+from common import exceptions
 
-################################
-# Configuration
-FILE = 'database.sqlite'
-################################
+HOUR = 3600
 
-if not os.path.isfile(FILE):
-    populateDb = True
-else:
-    populateDb = False
+def run(environ):
+    headers = []
+    status = '200 OK'
+    tiny = environ['module_path'].split('/')[0]
+    try:
+        assert tiny != ''
+    except:
+        raise exceptions.Error404()
+    cursor = db.conn.cursor()
+    cursor.execute('SELECT `full` FROM `tiny2full` WHERE tiny=?', (tiny,))
+    result = cursor.fetchone()
+    if result is None:
+        raise exceptions.Error404()
+    longurl = result[0]
+    results = []
 
-import sqlite3
-conn = sqlite3.connect(FILE, check_same_thread = False)
+    for start, end in [(x-HOUR,x) for x in
+                       [int(x)+time.time() for x in
+                        range(0, 12*HOUR, HOUR)]]:
+        cursor.execute("""SELECT COUNT(*) FROM `clicks`
+                          WHERE `tiny`=? AND `time`>? AND `time`<?""",
+                       (tiny, start, end))
+        results.append(cursor.fetchone()[0])
 
-cursor = conn.cursor()
-cursor.execute("""CREATE TABLE IF NOT EXISTS `tiny2full` (
-                      `tiny` varchar(10),
-                      `u_id` int(10),
-                      `full` varchar(65536),
-                      `submit_time` int(10),
-                      `expiry` int(10),
-                      PRIMARY KEY(`tiny`)
-                  );""")
-cursor.execute("""CREATE TABLE IF NOT EXISTS `users` (
-                      `u_id` int(10),
-                      `name` varchar(40),
-                      `passwdhash` varchar(100),
-                      `email` varchar(200),
-                      PRIMARY KEY(`u_id`)
-                  );""")
-cursor.execute("""CREATE TABLE IF NOT EXISTS `clicks` (
-                    `tiny` varchar(10),
-                    `u_id` int(10),
-                    `time` int(10)
-                 );""")
+    max_ = max(results)
+    min_ = min(results)
+
+    table = '<table>'
+    for ago, number in zip(range(1, 12), results):
+        if ago >= 2:
+            ago = 'Il y a %i heures' % ago
+        elif ago == 1:
+            ago = u'La dernière heure'
+        table += '<tr><td>%s</td><td>%i</td></tr>' % (ago, number)
+    table += '</table>'
+
+    responseBody = html.getHead(title='Statistiques sur %s' % tiny)
+    responseBody += u'Statistiques de clics pour l\'URL raccourcie.'
+    responseBody += table
+    responseBody += html.getFoot()
+
+    return status, headers, responseBody
+

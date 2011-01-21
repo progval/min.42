@@ -108,7 +108,8 @@ def run(environ):
         older = time.time() - 60*60
         string = ''
         for tiny, full in cursor:
-            string += '<li><a href="/%s">%s</a>' % (tiny, full)
+            string += '<li><a href="/%s">%s</a> ' % (tiny, full)
+            string += '<a href="/stats/%s">Stats</a></li>' % tiny
         responseBody += rootTemplate % {'last_tiny': string}
 
 
@@ -185,10 +186,17 @@ def run(environ):
         if result is None:
             raise exceptions.Error404()
 
+        cursor = db.conn.cursor()
+        cursor.execute("""INSERT INTO `clicks` VALUES(?,?,?)""",
+                       (environ['module_path'], user.currentUser.id, int(time.time())))
+        db.conn.commit()
+        cursor.execute('SELECT * FROM `clicks`')
+        print repr([x for x in cursor])
+
         responseBody = (u'<a href="%s">Cliquez sur ce lien si vous n\'êtes '
                        u'pas redirigé(e)</a>') % result[0]
-        headers.append(('Location', str(result[0])))
-        status = '302 Found'
+        #headers.append(('Location', str(result[0])))
+        #status = '302 Found'
 
 
     return status, headers, responseBody
