@@ -40,8 +40,8 @@ infinie ; pour min.42, une durée de vie infinie correspond à 7 caractères).
 <br />
 Même si l'inscription est préférée, pour profiter un maximum de
 fonctionnalités, elle est <strong>totalement</strong> gratuite, et ne demande
-pas d'autre informatique que l'essentiel. Votre mot de passe est crypté de
-manière indéchiffrable dans notre base de données.
+pas d'autre information que l'essentiel. Votre mot de passe est chiffré de
+manière indéchiffrable (hash) dans notre base de données.
 Tout est mis en œuvre pour que votre choix de ne pas vous inscrire soit le
 moins pénalisant possible.
 <br />
