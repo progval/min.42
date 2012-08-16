@@ -34,7 +34,6 @@ from common import html
 from common import exceptions
 
 testName = re.compile('^[a-zA-Z0-9_-]{2,36}$')
-testEmail = re.compile('^[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]{2,}\.[a-z]{2,}$')
 
 def run(environ):
     status = '200 OK'
@@ -97,7 +96,7 @@ Taille : de 2 à 36, et ne peux contenir que
 des caractères alphanumériques, des
 underscores et des tirets.</p>"""
             anyError = True
-        if not testEmail.match(data['email']):
+        if '@' not in data['email']:
             responseBody += u"""<p>L'adresse de courriel est invalide.</p>"""
             anyError = True
 
