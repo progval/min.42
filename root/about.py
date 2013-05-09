@@ -30,18 +30,16 @@ from common import exceptions
 from common import errors
 from common import html
 
-body = u"""<h1>Min.42 est libre et respectueux de vos droits</h1>
-<p>Ce raccourcisseur d'URL est axé sur la liberté. Il promeut le TLD .42,
-lui-même basé sur la liberté, et favorisant les logiciels libres. De plus,
-min.42 a pour but de vous laisser autant que possible la liberté de choisir
+body = u"""<h1>Min.42</h1>
+<p>min.42 a pour but de vous laisser autant que possible la liberté de choisir
 le rapport durée de vie/taille que vous souhaitez (les raccourcisseurs
 classiques vous proposent une taille de 7 ou 8 caractères pour une durée
 infinie ; pour min.42, une durée de vie infinie correspond à 7 caractères).
 <br />
-Même si l'inscription est préférée, pour profiter un maximum de
+Même si l'inscription est préférée, pour profiter d'un maximum de
 fonctionnalités, elle est <strong>totalement</strong> gratuite, et ne demande
-pas d'autre information que l'essentiel. Votre mot de passe est chiffré de
-manière indéchiffrable (hash) dans notre base de données.
+pas d'autre information que l'essentiel. Votre mot de passe est hashé
+dans notre base de données.
 Tout est mis en œuvre pour que votre choix de ne pas vous inscrire soit le
 moins pénalisant possible.
 <br />
@@ -68,8 +66,7 @@ modérés, rien ne peut donc garantir leur sanité.
 </p>
 
 <h1>Contact</h1>
-<p>L'auteur de ce site est Valentin Lorentz, aussi connu sous le nom de
-ProgVal. Adresse de courriel : progval(arobase)gmail[point]com</p>"""
+<p>progval+min42(arobase)progval[point]net</p>"""
 
 def run(environ):
     return '200 OK', [], html.getHead(title=u'À propos')+body+html.getFoot()
